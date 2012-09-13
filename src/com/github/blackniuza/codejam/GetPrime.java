@@ -21,7 +21,10 @@ public class GetPrime {
 	}
 	
 	static void calcAndPrint(int range, int count){
+//		long time1 = System.currentTimeMillis();
 		Primes ps = new Primes(range);
+//		long time2 = System.currentTimeMillis();
+//		System.out.println("Time use: "+(time2-time1));
 		ps.print(count);
 	}
 	
@@ -30,26 +33,39 @@ public class GetPrime {
 		BitSet isNotPrime;
 		int range;
 		int countPrime;
+		int countNotPrime;
 		
 		Primes(int range){
 			this.range = range;
 			isNotPrime = new BitSet(range+1);
 			countPrime = 0;
+			countNotPrime = 0;
 			calcPrimes();	
 		}
 		
 		void calcPrimes(){
 			setNotPrime(0);
 			setNotPrime(1);
+			countNotPrime++;
+			boolean flag = false;
 			for(int i=2;i<=range;i++){
 				if(isPrime(i)) countPrime++;
 				for(int cnt=0,j=nextPrime(0);cnt<countPrime;cnt++,j=nextPrime(j)){
 					int tmp = j*i;
-					if(tmp>range) break;
+					if(tmp>range) {
+						if(cnt==0) flag=true;
+						break;
+					}
 					setNotPrime(tmp);
+					countNotPrime++;
 					if(i%j==0) break;
 				}
+				if(flag) break;
 			}
+//			System.out.println("cp: "+countPrime);
+//			System.out.println("cnp: "+countNotPrime);
+			countPrime = range-countNotPrime;
+//			System.out.println("new cp: "+countPrime);
 		}
 		boolean isPrime(int index){
 			return !isNotPrime.get(index);
